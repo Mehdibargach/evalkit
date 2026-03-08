@@ -44,10 +44,17 @@ class QuestionResult(BaseModel):
     error: str | None = None
 
 
+class FailurePattern(BaseModel):
+    verdict: str  # INCORRECT, HALLUCINATION, PARTIAL
+    count: int
+    questions: list[str]
+
+
 class EvalReport(BaseModel):
     total_questions: int
     results: list[QuestionResult]
     scores: dict  # {"BLOCKING": {"pass": X, "total": Y}, ...}
+    failure_patterns: list[FailurePattern]
     decision: str  # GO / CONDITIONAL_GO / NO_GO
     decision_reason: str
     latency_seconds: float
@@ -114,6 +121,22 @@ def compute_scores(results: list[QuestionResult]) -> dict:
     return scores
 
 
+def compute_failure_patterns(results: list[QuestionResult]) -> list[FailurePattern]:
+    """Group failed questions by verdict type."""
+    patterns: dict[str, list[str]] = {}
+    for r in results:
+        if r.verdict not in ("CORRECT",):
+            verdict = r.verdict
+            if verdict not in patterns:
+                patterns[verdict] = []
+            patterns[verdict].append(r.question)
+
+    return [
+        FailurePattern(verdict=verdict, count=len(questions), questions=questions)
+        for verdict, questions in sorted(patterns.items())
+    ]
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "evalkit"}
@@ -173,8 +196,9 @@ async def evaluate(
     results = await asyncio.gather(*[process_question(q) for q in questions])
     results = list(results)
 
-    # 4. Compute scores and decision
+    # 4. Compute scores, failure patterns, and decision
     scores = compute_scores(results)
+    failure_patterns = compute_failure_patterns(results)
     decision, decision_reason = compute_eval_gate(results)
 
     latency = round(time.time() - start_time, 1)
@@ -183,6 +207,7 @@ async def evaluate(
         total_questions=len(results),
         results=results,
         scores=scores,
+        failure_patterns=failure_patterns,
         decision=decision,
         decision_reason=decision_reason,
         latency_seconds=latency,

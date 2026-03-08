@@ -1,0 +1,21 @@
+question,expected_answer,criteria_level
+What is the customer acquisition cost at 200 customers?,"$3,600",BLOCKING
+What is the target number of transactions per second at launch?,"10,000 TPS",BLOCKING
+What security certifications are planned?,"PCI DSS v4.0 Level 1 and SOC 2 Type II",BLOCKING
+What is the total annual compensation for the Phase 1 team?,"$5,760,000",BLOCKING
+What was NovaPay's revenue in Q4 2025?,"The document does not contain this information — it is a PRD with no actual financial results.",BLOCKING
+What is the total development budget?,"$18.5 million",BLOCKING
+How many engineers are needed for Phase 1?,The document should specify team composition for Phase 1 including engineering roles.,QUALITY
+What is NovaPay's pricing model?,The document should describe the pricing structure or fee model for merchants.,QUALITY
+What are the main risks identified in the project?,"The document should list project risks such as technical complexity, market competition, or regulatory challenges.",QUALITY
+Summarize the main advantages of NovaPay compared to traditional payment systems.,"NovaPay offers faster transaction processing, lower fees, modern cloud infrastructure, and AI-powered fraud detection.",QUALITY
+What is the migration strategy for existing merchants?,"The document should describe the parallel processing approach for migrating merchants from old to new payment processor.",QUALITY
+Compare NovaPay's approach to payment recovery vs traditional retry mechanisms.,"NovaPay uses AI-powered recovery to recover 40% of failed transactions, compared to basic retry logic in traditional systems.",QUALITY
+How does NovaPay handle data privacy and compliance?,"The document should address GDPR, data encryption, and compliance frameworks.",QUALITY
+What is the go-to-market strategy?,"The document should describe the GTM approach including target segments, channels, and launch timeline.",QUALITY
+What is the recommended font size for the NovaPay dashboard?,"The document does not contain UI design specifications such as font sizes.",SIGNAL
+What programming language is used for the backend?,"The document should mention the technology stack if specified, or indicate it is not mentioned.",SIGNAL
+How does the document's writing style compare to Amazon's PR/FAQ format?,"This is a meta-question about the document format — the system should either answer about the structure or indicate it cannot compare formats.",SIGNAL
+What is the weather forecast for the NovaPay launch date?,"The document does not contain weather information. This question is completely outside the document's scope.",SIGNAL
+What is the customer acquisition cost at 200 customers?,"$999",BLOCKING
+What is the total development budget?,"$50 million",BLOCKING

@@ -27,10 +27,18 @@ BUILD — Scope 1
 - Bug fixed: .env not loaded before OpenAI client init in judge.py
 - Eval Gate decision logic works (meta-test triggered NO_GO correctly)
 
-### Scope 1 — "Le pipeline complet"
-- 20 questions, scoring agrege, Eval Gate automatique
-- 8 micro-tests (S1-1 to S1-8)
-- Accord juge vs humain >= 80% (>= 16/20)
+### Scope 1 — DONE (8/8 PASS)
+- 20 questions against DocuQuery, 47.4s total (parallel)
+- Scores agreges: BLOCKING 75%, QUALITY 87.5%, SIGNAL 75%
+- Failure patterns: 1 HALLUCINATION, 3 INCORRECT, 3 PARTIAL
+- Eval Gate: NO-GO (2 meta-tests BLOCKING triggered correctly)
+- Accord juge vs humain: 90% (18/20)
+- Lecon: expected_answers precis > expected vagues pour la fiabilite du juge
+
+### Scope 2 — "Le produit fini"
+- Frontend Lovable: upload CSV, config endpoint, resultats visuels, verdict
+- Deploy: backend Render + frontend Lovable
+- 6 micro-tests (S2-1 to S2-6)
 
 ## Riskiest Assumption
 "An LLM judge (GPT-4o-mini) can score LLM responses with sufficient reliability (>= 80% agreement with human judgment) for a PM to trust the verdict — in under 60 seconds for 20 questions."

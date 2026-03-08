@@ -1,0 +1,6 @@
+question,expected_answer,criteria_level
+What is the customer acquisition cost at 200 customers?,"$3,600",BLOCKING
+What is the target number of transactions per second at launch?,"10,000 TPS",BLOCKING
+Summarize the main advantages of NovaPay compared to traditional payment systems.,NovaPay offers faster transaction processing and lower fees with modern cloud infrastructure and AI-powered fraud detection,QUALITY
+What was NovaPay's revenue in Q4 2025?,The document does not contain this information. It is a product requirements document and does not include actual financial results.,BLOCKING
+What is the customer acquisition cost at 200 customers?,"$999",BLOCKING

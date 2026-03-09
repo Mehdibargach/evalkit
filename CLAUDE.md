@@ -17,7 +17,14 @@ AI Evaluation (tooling) — side project #5/5 in the Builder PM portfolio.
 - **Deploy**: Render ($7/mo)
 
 ## Current Phase
-BUILD — Scope 1
+SHIP
+
+### EVALUATE — GO (5/5 PASS)
+- Accord juge vs humain: 90% (18/20) — BLOCKING PASS
+- Latence 20 questions: 37.7s — BLOCKING PASS
+- Zero auto-hallucination du juge — BLOCKING PASS
+- Decision Eval Gate: 100% coherence — QUALITY PASS
+- Cout par run: ~$0.01 — SIGNAL PASS
 
 ### Walking Skeleton — DONE (7/7 PASS)
 - 5 questions against DocuQuery AI endpoint (https://docuquery-ai-5rfb.onrender.com)
@@ -35,10 +42,12 @@ BUILD — Scope 1
 - Accord juge vs humain: 90% (18/20)
 - Lecon: expected_answers precis > expected vagues pour la fiabilite du juge
 
-### Scope 2 — "Le produit fini"
-- Frontend Lovable: upload CSV, config endpoint, resultats visuels, verdict
-- Deploy: backend Render + frontend Lovable
-- 6 micro-tests (S2-1 to S2-6)
+### Scope 2 — DONE (6/6 PASS)
+- Frontend Lovable: two-path landing (demo mode + custom eval), results with verdict banner + score cards + detailed results
+- Demo mode: built-in 8-question dataset with mock endpoint, zero-config tryout
+- UX iterations: subtle loader, score card legends (BLOCKING/QUALITY/SIGNAL explanations), criteria badges per question
+- Deploy: backend Render (https://evalkit-vw7k.onrender.com) + frontend Lovable
+- Backend verified: /demo → NO_GO (15.6s), /evaluate with GO dataset → GO (9s, 4/4 CORRECT)
 
 ## Riskiest Assumption
 "An LLM judge (GPT-4o-mini) can score LLM responses with sufficient reliability (>= 80% agreement with human judgment) for a PM to trust the verdict — in under 60 seconds for 20 questions."

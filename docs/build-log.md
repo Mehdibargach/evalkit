@@ -34,3 +34,26 @@
 **Time:** ~30 min (dataset + code failure patterns + test + analyse)
 
 **Result:** 8/8 micro-tests PASS. Accord juge vs humain 90% (18/20). Eval Gate fonctionne (NO-GO declenche par meta-tests BLOCKING).
+
+## Scope 2 — 2026-03-09
+
+**What:** Le produit fini — frontend Lovable + deploy Render.
+
+**Decisions:**
+- Two-path landing : demo mode (mock endpoint + 8 questions built-in) + custom eval (upload CSV + config endpoint). Demo resout le probleme "chicken and egg" — l'utilisateur peut tester sans avoir d'API.
+- Preview CSV retiree (decision PM — bruit inutile, remplacee par demo mode)
+- Score cards avec legendes explicatives : BLOCKING = "Must pass. Any failure = NO-GO", QUALITY = "Should pass. Failures won't block release", SIGNAL = "Nice to have. Tracked for improvement"
+- Badges criteres (BLOCKING/QUALITY/SIGNAL) sur chaque question dans les resultats detailles
+- Loader subtil (progress bar) au lieu de spinner lourd
+- Subtitle final : "From 'I think it works' to 'I know it does.'" (valide apres 4 iterations PM)
+
+**Problems:**
+- Endpoint URL UX : l'utilisateur entrait l'URL de base sans le path `/query`, causant des 404. Fix : helper text + validation. Insight PM : "si je me trompe, tout le monde va se tromper"
+- CSV parser Lovable ne respectait pas les valeurs quotees (virgules dans "$3,600" splittees). Fix : parser CSV conforme RFC.
+- Score cards affichaient 0/0 — mapping incorrect des champs `response.scores` cote frontend
+- Failure patterns "UNKNOWN" — le frontend ne lisait pas le champ `verdict` correctement
+- Multiple iterations Lovable pour connecter correctement au backend EvalKit (pas DocuQuery)
+
+**Time:** ~2h (prompts Lovable + iterations UX + debug connexion + deploy)
+
+**Result:** 6/6 micro-tests PASS. Backend verifie : /demo → NO_GO (15.6s), /evaluate GO dataset → GO (9s, 4/4). Frontend approuve par PM.

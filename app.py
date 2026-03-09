@@ -137,6 +137,84 @@ def compute_failure_patterns(results: list[QuestionResult]) -> list[FailurePatte
     ]
 
 
+# --- Demo mode: mock endpoint + built-in dataset ---
+
+DEMO_DATASET = [
+    {"question": "What is the total development budget?", "expected_answer": "$18.5 million", "criteria_level": "BLOCKING"},
+    {"question": "What security certifications are planned?", "expected_answer": "PCI DSS v4.0 Level 1 and SOC 2 Type II", "criteria_level": "BLOCKING"},
+    {"question": "What is the customer acquisition cost at 200 customers?", "expected_answer": "$3,600", "criteria_level": "BLOCKING"},
+    {"question": "What was the company revenue in Q4 2025?", "expected_answer": "The document does not contain revenue figures.", "criteria_level": "BLOCKING"},
+    {"question": "Summarize the main advantages of the product.", "expected_answer": "Faster processing, lower fees, modern cloud infrastructure, and AI-powered fraud detection.", "criteria_level": "QUALITY"},
+    {"question": "What is the go-to-market strategy?", "expected_answer": "Closed beta with design partners, then limited availability, then general availability with content marketing and outbound sales.", "criteria_level": "QUALITY"},
+    {"question": "What is the pricing model?", "expected_answer": "Three tiers: Standard (2.7% + $0.25/tx), Growth ($499/mo), Enterprise (custom).", "criteria_level": "QUALITY"},
+    {"question": "What is the recommended font size for the dashboard?", "expected_answer": "Not specified in the document.", "criteria_level": "SIGNAL"},
+]
+
+# Mock responses: simulate a real AI with some correct, some partial, some wrong
+MOCK_RESPONSES = {
+    "What is the total development budget?": "The total development budget across all phases is $18.5 million.",
+    "What security certifications are planned?": "PCI DSS v4.0 Level 1 and SOC 2 Type II are planned.",
+    "What is the customer acquisition cost at 200 customers?": "The CAC at 200 customers is $3,600.",
+    "What was the company revenue in Q4 2025?": "The company earned $12M in Q4 2025.",  # HALLUCINATION — info not in doc
+    "Summarize the main advantages of the product.": "The product offers integrated analytics, transparent pricing, and self-serve onboarding for mid-market companies.",  # PARTIAL — misses key points
+    "What is the go-to-market strategy?": "The GTM includes a closed beta with 15 design partners, limited availability for 100 merchants, then general availability with content marketing, developer community, partnerships, and outbound sales.",
+    "What is the pricing model?": "There are three plans: Standard at 2.7% + $0.25 per transaction, Growth at $499/month, and Enterprise with custom pricing.",
+    "What is the recommended font size for the dashboard?": "I don't have enough information to answer this question.",
+}
+
+
+@app.post("/mock/query")
+async def mock_query(request: dict):
+    """Mock endpoint that simulates an AI answering questions."""
+    question = request.get("question", "")
+    answer = MOCK_RESPONSES.get(question, "I don't have enough information to answer this question.")
+    return {"answer": answer}
+
+
+@app.post("/demo", response_model=EvalReport)
+async def demo_evaluate():
+    """Run evaluation with built-in demo dataset against built-in mock endpoint."""
+    start_time = time.time()
+
+    async def process_demo_question(q: dict) -> QuestionResult:
+        # Call our own mock endpoint
+        mock_response = MOCK_RESPONSES.get(q["question"], "I don't have enough information.")
+
+        judge_result = judge_response(
+            question=q["question"],
+            actual_response=mock_response,
+            expected_answer=q["expected_answer"],
+        )
+
+        return QuestionResult(
+            question=q["question"],
+            expected_answer=q["expected_answer"],
+            criteria_level=q["criteria_level"],
+            actual_response=mock_response,
+            verdict=judge_result["verdict"],
+            justification=judge_result["justification"],
+        )
+
+    results = await asyncio.gather(*[process_demo_question(q) for q in DEMO_DATASET])
+    results = list(results)
+
+    scores = compute_scores(results)
+    failure_patterns = compute_failure_patterns(results)
+    decision, decision_reason = compute_eval_gate(results)
+
+    latency = round(time.time() - start_time, 1)
+
+    return EvalReport(
+        total_questions=len(results),
+        results=results,
+        scores=scores,
+        failure_patterns=failure_patterns,
+        decision=decision,
+        decision_reason=decision_reason,
+        latency_seconds=latency,
+    )
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "evalkit"}

@@ -17,7 +17,7 @@ AI Evaluation (tooling) — side project #5/5 in the Builder PM portfolio.
 - **Deploy**: Render ($7/mo)
 
 ## Current Phase
-SHIP
+DONE (MACRO RETRO: STOP)
 
 ### EVALUATE — GO (5/5 PASS)
 - Accord juge vs humain: 90% (18/20) — BLOCKING PASS
